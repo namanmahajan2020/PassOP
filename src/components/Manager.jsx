@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRef } from 'react'
 const Manager = () => {
     const ref = useRef()
+    const passwordRef = useRef()
     const [form, setform] = useState({ site: "", username: "", password: "" })
     const [passwordArray, setpasswordArray] = useState([])
 
@@ -12,20 +13,25 @@ const Manager = () => {
         }
     }, [])
 
+    const copyText = (text) => {
+        navigator.clipboard.writeText(text)
+    }
+
     const showPassword = () => {
-        alert("show the password")
+        passwordRef.current.type = "text"
         if (ref.current.src.includes("icons/eyecross.png")) {
             ref.current.src = "icons/eye.png"
+            passwordRef.current.type = "password"
         }
         else {
             ref.current.src = "icons/eyecross.png"
+            passwordRef.current.type = "text"
         }
     }
 
     const savePassword = () => {
         setpasswordArray([...passwordArray, form])
         localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]))
-        console.log([...passwordArray, form])
     }
 
     const handleChange = (e) => {
@@ -50,7 +56,7 @@ const Manager = () => {
                     <div className="flex w-full gap-8">
                         <input value={form.username} onChange={handleChange} placeholder='Enter Username' className='rounded-full bg-white border-green-500 w-full border-1 p-4 py-1' type="text" name="username" id="" />
                         <div className="relative">
-                            <input value={form.password} onChange={handleChange} placeholder='Enter Password' className='rounded-full bg-white border-green-500 w-full border-1 p-4 py-1' type="text" name="password" id="" />
+                            <input ref={passwordRef} value={form.password} onChange={handleChange} placeholder='Enter Password' className='rounded-full bg-white border-green-500 w-full border-1 p-4 py-1' type="password" name="password" id="" />
                             <span className='absolute right-[4px] top-[4px] cursor-pointer' onClick={showPassword}>
                                 <img ref={ref} className='p-1' width={26} src="icons/eye.png" alt="eye" /></span>
                         </div>
@@ -74,13 +80,46 @@ const Manager = () => {
                             </tr>
                         </thead>
                         <tbody className='bg-green-100'>
-                            {passwordArray.map((item,index) => {
+                            {passwordArray.map((item, index) => {
                                 return <tr key={index}>
-                                <td className=' py-2 border border-white text-center w-32'>< a href={item.site} target='_blank'>{item.site}</a></td>
-                                <td className=' py-2 border border-white text-center w-32'>{item.username}</td>
-                                <td className=' py-2 border border-white text-center w-32'>{item.password}</td>
-                            </tr>
-                              })}
+                                    <td className='py-2 border border-white text-center'>
+                                        <div className='flex items-center justify-center '>
+                                            < a href={item.site} target='_blank'>{item.site}</a>
+                                            <div className='lordiconcopy cursor-pointer size-7' onClick={() => { copyText(item.site) }}>
+                                                <lord-icon
+                                                    style={{ "width": "25px", "height": "25px", "paddingTop": "3px", "paddingLeft": "3px" }}
+                                                    src="https://cdn.lordicon.com/iykgtsbt.json"
+                                                    trigger="hover">
+                                                </lord-icon>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className=' py-2 border border-white text-center'>
+                                        <div className='flex items-center justify-center '>
+                                            {item.username}
+                                            <div className='lordiconcopy cursor-pointer size-7' onClick={() => { copyText(item.username) }}>
+                                                <lord-icon
+                                                    style={{ "width": "25px", "height": "25px", "paddingTop": "3px", "paddingLeft": "3px" }}
+                                                    src="https://cdn.lordicon.com/iykgtsbt.json"
+                                                    trigger="hover">
+                                                </lord-icon>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className=' py-2 border border-white text-center'>
+                                        <div className='flex items-center justify-center '>
+                                            {item.password}
+                                            <div className='lordiconcopy cursor-pointer size-7' onClick={() => { copyText(item.password) }}>
+                                                <lord-icon
+                                                    style={{ "width": "25px", "height": "25px", "paddingTop": "3px", "paddingLeft": "3px" }}
+                                                    src="https://cdn.lordicon.com/iykgtsbt.json"
+                                                    trigger="hover">
+                                                </lord-icon>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            })}
                         </tbody>
                     </table>}
                 </div>
